@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 
 type Mascota = {
@@ -119,6 +119,7 @@ const EXAMENES_COMUNES = [
 
 export default function NuevaConsultaPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [step, setStep] = useState(1);
   const [mascotas, setMascotas] = useState<Mascota[]>([]);
@@ -136,13 +137,22 @@ export default function NuevaConsultaPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function cargarMascotas() {
-      const data = await apiFetch("/mascotas");
-      setMascotas(data);
-    }
+  async function cargarMascotas() {
+    const data = await apiFetch("/mascotas");
+    setMascotas(data);
 
-    cargarMascotas();
-  }, []);
+    const mascotaId = searchParams.get("mascotaId");
+
+    if (mascotaId) {
+      setForm((prev) => ({
+        ...prev,
+        mascotaId,
+      }));
+    }
+  }
+
+  cargarMascotas();
+}, [searchParams]);
 
   const mascotaSeleccionada =
     mascotas.find((m) => m.id === Number(form.mascotaId)) || null;
