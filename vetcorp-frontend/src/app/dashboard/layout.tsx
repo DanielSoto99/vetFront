@@ -19,18 +19,41 @@ type Usuario = {
   apellido?: string;
   email: string;
   rol: string;
+  sexoUsuario?: "M" | "F" | "OTRO";
 };
+
+function obtenerTitulo(usuario: Usuario | null) {
+  if (!usuario) return "";
+
+  if (usuario.sexoUsuario === "F") return "Dra.";
+  if (usuario.sexoUsuario === "M") return "Dr.";
+
+  return "";
+}
 
 function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
 
   return (
     <div className="flex h-full flex-col p-6">
-      <div className="mb-10 flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900">VetCorp</h2>
-          <p className="text-sm text-slate-500">Gestión veterinaria</p>
-        </div>
+      <div className="mb-10 flex h-[46px] items-center justify-between">
+        <Link
+          href="/dashboard"
+          onClick={onClose}
+          className="flex h-full items-center gap-3"
+        >
+          <img
+            src="/logo-vetcorp.png"
+            alt="VetCorp"
+            className="h-30 w-auto object-contain"
+          />
+
+          <div className="leading-tight">
+            <p className="text-sm font-bold text-slate-900">
+              Gestión veterinaria
+            </p>
+          </div>
+        </Link>
 
         {onClose && (
           <button
@@ -153,7 +176,11 @@ export default function DashboardLayout({
                 onClick={() => setUsuarioMenu(!usuarioMenu)}
                 className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800"
               >
-                <span>{usuario?.nombre || "Usuario"}</span>
+                <span>
+                  {usuario
+                    ? `${obtenerTitulo(usuario)} ${usuario.nombre}`
+                    : "Usuario"}
+                </span>
                 <span>▾</span>
               </button>
 
@@ -161,7 +188,9 @@ export default function DashboardLayout({
                 <div className="absolute right-0 mt-2 w-56 rounded-2xl border bg-white p-2 shadow-xl">
                   <div className="border-b px-3 py-2">
                     <p className="text-sm font-semibold text-slate-900">
-                      {usuario?.nombre} {usuario?.apellido || ""}
+                      {usuario
+                        ? `${obtenerTitulo(usuario)} ${usuario.nombre} ${usuario.apellido || ""}`
+                        : "Usuario"}
                     </p>
                     <p className="text-xs text-slate-500">{usuario?.email}</p>
                     <p className="mt-1 text-xs font-medium text-slate-400">
