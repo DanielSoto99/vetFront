@@ -7,7 +7,10 @@ import { apiFetch } from "@/lib/api";
 type Mascota = {
   id: number;
   nombre: string;
-  especie: string;
+  especie?: {
+  id: number;
+  nombre: string;
+};
   raza?: string;
   sexo?: string;
   pesoActual?: number;
@@ -56,7 +59,7 @@ export default function PacientesPage() {
 
     return (
       m.nombre.toLowerCase().includes(q) ||
-      m.especie.toLowerCase().includes(q) ||
+      (m.especie?.nombre || "").toLowerCase().includes(q) ||
       (m.raza || "").toLowerCase().includes(q) ||
       (m.tutor?.nombre || "").toLowerCase().includes(q) ||
       (m.tutor?.apellido || "").toLowerCase().includes(q)
@@ -106,7 +109,7 @@ export default function PacientesPage() {
                   className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-2xl">
-                    {emojiEspecie(m.especie)}
+                    {emojiEspecie(m.especie?.nombre)}
                   </div>
 
                   <div className="flex-1">
@@ -118,7 +121,7 @@ export default function PacientesPage() {
                     </p>
 
                     <p className="text-sm text-slate-500">
-                      {m.especie} · {m.sexo || "Sin sexo"} ·{" "}
+                      {m.especie?.nombre || "Sin especie"} · {m.sexo || "Sin sexo"} ·{" "}
                       {m.pesoActual ? `${m.pesoActual} kg` : "Sin peso"}
                     </p>
 
